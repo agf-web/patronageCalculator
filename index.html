@@ -1,0 +1,125 @@
+<html>
+
+<head>
+  <!--[if lt IE 9]>
+<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://assets.adobedtm.com/c876840ac68fc41c08a580a3fb1869c51ca83380/satelliteLib-e3fb7c6ec5c4dd9cd95965474d6086cfaeab4939.js"></script>
+  <script type="text/javascript">
+    //<![CDATA[
+    $(document).ready(function() {
+
+      var patronagePercent = 19.42 / 100; /* 19.42% Patronage */
+      /*var loanAmount = 100000;
+      var interestRate = 10/100;*/
+
+      $(document).on('click', '#btnSubmit', function(e) {
+
+        e.preventDefault();
+        var loanAmount = $('#tbxLoanAmount').val().replace(/,/g, '');
+        var interestRate = $('#tbxAnnualRate').val() / 100;
+
+        var patronageDistro = calcPatronageDistro(loanAmount, interestRate, patronagePercent);
+        var effectiveInterestExpense = calcEffectiveInterestExpense(loanAmount, interestRate, patronageDistro);
+        var effectiveInterestRate = calcEffectiveInterestRate(interestRate, patronagePercent);
+
+        $('span[data-id="loan-amount"]').text(parseInt(loanAmount * interestRate, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
+        $('span[data-id="annual-rate"]').text($('#tbxAnnualRate').val() + '%');
+        $('span[data-id="estimated-patronage"]').text('$' + patronageDistro.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
+        $('span[data-id="effective-interest-expense"]').text('$' + effectiveInterestExpense.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
+        $('span[data-id="effective-interest-rate"]').text((effectiveInterestRate * 100).toFixed(2) + '%');
+        $('.calculator-results').addClass('reveal');
+      });
+
+      $(document).on('click', '#clearForm', function(e) {
+        $('.calculator-results').removeClass('reveal');
+      });
+
+
+    });
+
+    function calcPatronageDistro(loanAmount, interestRate, patronagePercent) {
+
+      var patronageDistro = (loanAmount * interestRate) * patronagePercent;
+
+      return (patronageDistro);
+
+    }
+
+    function calcEffectiveInterestExpense(loanAmount, interestRate, patronageDistro) {
+
+      var grossInterestExpense = loanAmount * interestRate;
+      var effectiveInterestExpense = grossInterestExpense - patronageDistro;
+
+      return (effectiveInterestExpense);
+    }
+
+    function calcEffectiveInterestRate(interestRate, patronagePercent) {
+
+      var effectiveInterestRate = interestRate * (1 - patronagePercent);
+
+      return (effectiveInterestRate);
+    }
+    //]]>
+  </script>
+  </script>
+  <style>
+    .calculator-results {
+      display: none;
+      transition: 0.33s display ease;
+    }
+
+    .reveal {
+      display: block;
+      margin-top: 2em;
+    }
+  </style>
+</head>
+
+<body>
+  <container>
+    <div class="row">
+      <div class="col-lg-4 col-lg-offset-4">
+        <!--Form Starts Here -->
+        <form class="formWrapper calculator patronageCalculator">
+          <div class="form-group"><label for="tbxLoanAmount">Loan Amount</label>
+            <div class="input-group">
+              <div class="input-group-addon">$</div>
+              <input class="form-control" id="tbxLoanAmount" placeholder="Amount" runat="server" type="text" />
+              <div class="input-group-addon">.00</div>
+            </div>
+          </div>
+
+          <div class="form-group"><label for="tbxAnnualRate">Annual Rate</label>
+
+            <div class="input-group"><input class="form-control" id="tbxAnnualRate" placeholder="Annual Rate" runat="server" type="text" />
+              <div class="input-group-addon">%</div>
+            </div>
+          </div>
+          <button class="btn btn-block btn-accent" id="btnSubmit" runat="server" type="submit">Submit</button><button class="btn btn-block btn-default" id="clearForm" runat="server" type="reset">Reset</button>
+        </form>
+        <!--Form Ends Here -->
+
+        <!--Results Start Here -->
+        <div class="calculator-results">
+          <p>Here is your estimated Patronage Distribution: <strong><span data-id="estimated-patronage">ESTIMATED PATRONAGE</span></strong></p>
+
+          <p>After receipt of your distribution, patronage effectively lowers your total interest cost for the first year of your loan from <strong>$<span data-id="loan-amount">XXXXX</span></strong> to: <strong><span data-id="effective-interest-expense">EFFECTIVE INTEREST EXPENSE</span></strong></p>
+
+          <p>This effectively lowers your interest rate from <strong><span data-id="annual-rate">XXXX</span></strong> to: <strong><span data-id="effective-interest-rate">EFFECTIVE INTEREST RATE</span></strong></p>
+
+          <p>*Results based on 10-year average refund totals. Past performance not a guarantee of future payouts. Calculations do not account for time value of money or distinguish between returns made in cash and in allocated surplus. Talk to a loan officer
+            for details.</p>
+        </div>
+        <!--Results End Here -->
+      </div>
+    </div>
+  </container>
+
+</body>
+
+
+</html>
